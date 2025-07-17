@@ -494,9 +494,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- STATE MANAGEMENT ---
-    // The API Key is now handled by the execution environment.
-    // The 'userApiKey' variable is kept as an empty string placeholder.
-    const userApiKey = ""; 
+    // The API Key is now hardcoded into the script.
+    const userApiKey = "AIzaSyAceyZcdsUrv-eVoHJ50rFuhfziE7wqoFs"; 
     const rppData = {
         namaSekolah: '', jenjang: '', mapel: '', tahunPelajaran: '', kelasSemester: '', fase: '',
         alokasiWaktu: '', lingkungan: '', namaGuru: '', namaKepsek: '',
@@ -787,7 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const apiKey = userApiKey; // Use the placeholder API key
+            const apiKey = userApiKey; // Use the hardcoded API key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", responseSchema: schema } };
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -963,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <li>Model Pembelajaran: ${modelPembelajaran} berbasis Flipped Classroom</li>
                                 <li>Pendekatan Pembelajaran: Konstruktivisme</li>
                                 <li>Strategi Pembelajaran: Inkuiri</li>
-                                <li>Metode Pembelajaran: Diskusi – Tanya Jawab - Ceramah</li>
+                                <li>Metode Pembelajaran: Diskusi â€“ Tanya Jawab - Ceramah</li>
                             </ul>
                         </li>
                         <li><strong>Kemitraan Pembelajaran</strong>
@@ -1047,7 +1046,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const schema = { type: "OBJECT", properties: { "pilihan_ganda": { type: "ARRAY", items: { type: "OBJECT", properties: { "pertanyaan": { "type": "STRING" }, "opsi": { type: "OBJECT", properties: { "A": { "type": "STRING" }, "B": { "type": "STRING" }, "C": { "type": "STRING" }, "D": { "type": "STRING" }, "E": { "type": "STRING" } }, required: ["A", "B", "C", "D", "E"] }, "kunci": { "type": "STRING" } }, required: ["pertanyaan", "opsi", "kunci"] } }, "uraian": { type: "ARRAY", items: { type: "OBJECT", properties: { "pertanyaan": { "type": "STRING" }, "pembahasan": { "type": "STRING" } }, required: ["pertanyaan", "pembahasan"] } } }, required: ["pilihan_ganda", "uraian"] };
                     
                     try {
-                        const apiKey = userApiKey; // Use the placeholder API key
+                        const apiKey = userApiKey; // Use the hardcoded API key
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                         const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", responseSchema: schema } };
                         const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
