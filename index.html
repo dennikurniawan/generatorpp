@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPP Generator Deep Learning 2025</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Libraries for saving to Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .login-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .main-app {
+            display: none; /* Initially hidden */
+        }
+        .form-section, .output-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .btn-success {
+            background-color: #16a34a;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #15803d;
+        }
+        .btn-info {
+            background-color: #0891b2; /* Teal color */
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #0e7490;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        .marquee-container {
+            background-color: #1e293b;
+            color: white;
+            padding: 0.75rem;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+        #help-modal {
+            display: none;
+        }
+
+        .rpp-footer {
+            text-align: left;
+            font-style: italic;
+            color: #6b7280;
+            margin-top: 1.25cm;
+            padding: 0;
+            border: none;
+            font-size: 9pt;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+            .main-app {
+                display: block !important;
+            }
+            header, .marquee-container, .form-section, .btn, #output-container, #help-modal, #login-screen {
+                display: none !important;
+            }
+            .output-section {
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            .rpp-output-container {
+                display: block !important;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .rpp-section {
+                page-break-after: always;
+                padding: 2cm; /* A4 margins */
+                box-sizing: border-box;
+            }
+            .rpp-section:last-child {
+                page-break-after: auto; /* No page break after the last RPP */
+            }
+            .lampiran-section {
+                page-break-before: always;
+                padding: 2cm; /* A4 margins */
+                box-sizing: border-box;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            th, td {
+                border: 1px solid #e5e7eb;
+                padding: 0.75rem;
+                text-align: left;
+            }
+            .rpp-footer {
+                position: fixed; /* Position footer at bottom of page */
+                bottom: 1cm;
+                left: 2cm;
+                right: 2cm;
+                width: auto;
+                text-align: left;
+                font-style: italic;
+                font-size: 9pt;
+                color: #6b7280;
+                border: none;
+                padding: 0;
+            }
+            /* Ensure list styles are preserved */
+            ul.list-disc, ol.list-decimal {
+                list-style-position: inside;
+                margin-left: 1rem;
+            }
+            ul.list-disc li, ol.list-decimal li {
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-100">
+        <div class="login-card w-full max-w-md">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">RPP Generator</h1>
+            <p class="text-center text-gray-500 mb-6">Pendekatan Deep Learning</p>
+            <div id="login-error" class="text-red-500 text-center mb-4 hidden">Username atau Password salah.</div>
+            <div class="space-y-4">
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Masukkan username">
+                </div>
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Masukkan password">
+                </div>
+                <button id="login-btn" class="btn btn-primary w-full">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="main-app">
+        <header class="bg-white shadow-md p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-blue-700">RPP GENERATOR DEEP LEARNING</h1>
+                <div class="flex items-center space-x-4">
+                    <button id="help-btn" class="btn btn-secondary">
+                        <i class="fas fa-question-circle mr-2"></i> Bantuan
+                    </button>
+                    <button id="logout-btn" class="btn btn-secondary bg-red-600 hover:bg-red-700">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="font-semibold">TIM Kurikulum | UPT SDN Kandangsapi 1</span>
+            </div>
+        </div>
+
+        <main class="container mx-auto p-4 md:p-6">
+            <!-- Step 1: Identitas Modul -->
+            <section class="form-section" id="section-1">
+                <h2 class="text-xl font-bold mb-4">1. Identitas Modul & Sekolah</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nama-sekolah" class="form-label">a. Nama Sekolah</label>
+                        <input type="text" id="nama-sekolah" class="form-input" placeholder="Contoh: UPT SDN Kandangsapi 1">
+                    </div>
+                    <div>
+                        <label for="jenjang-sekolah" class="form-label">b. Jenjang Sekolah</label>
+                        <select id="jenjang-sekolah" class="form-select">
+                            <option value="">Pilih Jenjang</option>
+                            <option value="PAUD">PAUD</option>
+                            <option value="TK">TK</option>
+                            <option value="SD">SD/MI</option>
+                            <option value="SMP">SMP/MTs</option>
+                            <option value="SMA">SMA/MA/SMK</option>
+                            <option value="SDLB">SDLB</option>
+                            <option value="SMPLB">SMPLB</option>
+                            <option value="SMALB">SMALB</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label for="mata-pelajaran" class="form-label">c. Mata Pelajaran</label>
+                        <input type="text" id="mata-pelajaran" class="form-input" placeholder="Contoh: Informatika">
+                    </div>
+                    <div>
+                        <label for="tahun-pelajaran" class="form-label">d. Tahun Pelajaran</label>
+                        <input type="text" id="tahun-pelajaran" class="form-input" placeholder="Contoh: 2025/2026">
+                    </div>
+                    <div>
+                        <label for="kelas-semester" class="form-label">e. Kelas / Semester</label>
+                        <select id="kelas-semester" class="form-select" disabled>
+                            <option>Pilih jenjang terlebih dahulu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="fase" class="form-label">f. Fase</label>
+                        <select id="fase" class="form-select" disabled>
+                           <option>Pilih jenjang terlebih dahulu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="alokasi-waktu" class="form-label">g. Alokasi Waktu</label>
+                        <select id="alokasi-waktu" class="form-select">
+                            <option value="">Pilih Alokasi Waktu</option>
+                            <option value="1 JP x 30 Menit">1 JP x 30 Menit</option>
+                            <option value="2 JP x 30 Menit">2 JP x 30 Menit</option>
+                            <option value="3 JP x 30 Menit">3 JP x 30 Menit</option>
+                            <option value="1 JP x 35 Menit">1 JP x 35 Menit</option>
+                            <option value="2 JP x 35 Menit">2 JP x 35 Menit</option>
+                            <option value="3 JP x 35 Menit">3 JP x 35 Menit</option>
+                            <option value="4 JP x 35 Menit">4 JP x 35 Menit</option>
+                            <option value="1 JP x 40 Menit">1 JP x 40 Menit</option>
+                            <option value="2 JP x 40 Menit">2 JP x 40 Menit</option>
+                            <option value="3 JP x 40 Menit">3 JP x 40 Menit</option>
+                            <option value="1 JP x 45 Menit">1 JP x 45 Menit</option>
+                            <option value="2 JP x 45 Menit">2 JP x 45 Menit</option>
+                            <option value="3 JP x 45 Menit">3 JP x 45 Menit</option>
+                            <option value="4 JP x 45 Menit">4 JP x 45 Menit</option>
+                            <option value="5 JP x 45 Menit">5 JP x 45 Menit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nama-guru" class="form-label">h. Nama Guru / NIP</label>
+                        <input type="text" id="nama-guru" class="form-input" placeholder="Contoh: PABLO ESCOBAR, S.Kom. / NIP: 19...">
+                    </div>
+                     <div>
+                        <label for="nama-kepsek" class="form-label">i. Nama Kepala Sekolah / NIP</label>
+                        <input type="text" id="nama-kepsek" class="form-input" placeholder="Contoh: IBRAHIMOVIC, S.Pd / NIP: 198110032006041019">
+                    </div>
+                    <div>
+                        <label for="kota" class="form-label">j. Kota</label>
+                        <input type="text" id="kota" class="form-input" placeholder="Contoh: Kota Pasuruan">
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mt-8 mb-4 border-t pt-4">Pengaturan Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="kktp-tercapai-min" class="form-label">Nilai Minimal "Tercapai"</label>
+                        <input type="number" id="kktp-tercapai-min" class="form-input" value="70" min="0" max="100">
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mt-8 mb-4 border-t pt-4">Profil Lulusan</h3>
+                <div id="profil-lulusan-checklist" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-4">
+                    <!-- Checkboxes will be inserted here by JS -->
+                </div>
+
+                <div class="md:col-span-2 mt-4">
+                    <label for="sarana-prasarana" class="form-label">Sarana & Prasarana</label>
+                    <input type="text" id="sarana-prasarana" class="form-input" value="LCD Projector, Papan Tulis, Spidol">
+                </div>
+
+                <h3 class="text-lg font-semibold mt-8 mb-4 border-t pt-4">Identifikasi Awal Siswa</h3>
+                <div class="space-y-2">
+                    <div>
+                        <label for="karakteristik-siswa" class="form-label">1. Karakteristik Siswa</label>
+                        <input type="text" id="karakteristik-siswa" class="form-input" value="Sebagian siswa cenderung pasif, 2 siswa berkebutuhan khusus, ada yang belum lancar membaca/berhitung.">
+                    </div>
+                    <div>
+                        <label for="minat-belajar" class="form-label">2. Minat Belajar</label>
+                        <input type="text" id="minat-belajar" class="form-input" value="Sebagian siswa minat belajar rendah, lebih suka praktik di laboratorium dan kerja kelompok.">
+                    </div>
+                    <div>
+                        <label for="motivasi-belajar" class="form-label">3. Motivasi Belajar</label>
+                        <input type="text" id="motivasi-belajar" class="form-input" value="Sebagian siswa motivasi belajar rendah.">
+                    </div>
+                    <div>
+                        <label for="prestasi-belajar" class="form-label">4. Prestasi Belajar</label>
+                        <input type="text" id="prestasi-belajar" class="form-input" value="Rata-rata prestasi belajar menurun.">
+                    </div>
+                    <div>
+                        <label for="lingkungan-sekolah" class="form-label">5. Lingkungan Sekolah</label>
+                        <input type="text" id="lingkungan-sekolah" class="form-input" placeholder="Contoh: Perkotaan, mayoritas siswa dari keluarga ekonomi menengah">
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-semibold mt-8 mb-4 border-t pt-4">Kerangka Pembelajaran</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="kemitraan-pembelajaran" class="form-label">Kemitraan Pembelajaran</label>
+                        <input type="text" id="kemitraan-pembelajaran" class="form-input" value="Guru Mapel Bahasa Inggris, Descriptive Text">
+                    </div>
+                    <div>
+                        <label for="lingkungan-pembelajaran-rpp" class="form-label">Lingkungan Pembelajaran</label>
+                        <input type="text" id="lingkungan-pembelajaran-rpp" class="form-input" value="Budaya tertib, bersih, disiplin (5K), Adiwiyata">
+                    </div>
+                    <div>
+                        <label for="pemanfaatan-digital-perencanaan" class="form-label">Pemanfaatan Digital (Perencanaan)</label>
+                        <input type="text" id="pemanfaatan-digital-perencanaan" class="form-input" value="Pemanfaatan AI, Canva.">
+                    </div>
+                    <div>
+                        <label for="pemanfaatan-digital-pelaksanaan" class="form-label">Pemanfaatan Digital (Pelaksanaan)</label>
+                        <input type="text" id="pemanfaatan-digital-pelaksanaan" class="form-input" value="Pemanfaatan AI, Canva.">
+                    </div>
+                    <div>
+                        <label for="pemanfaatan-digital-asesmen" class="form-label">Pemanfaatan Digital (Asesmen)</label>
+                        <input type="text" id="pemanfaatan-digital-asesmen" class="form-input" value="Pemanfaatan Quizziz, Canva.">
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 2: Capaian Pembelajaran -->
+            <section class="form-section" id="section-2">
+                  <h2 class="text-xl font-bold mb-4">2. Capaian Pembelajaran / Materi</h2>
+                  <label for="cp-materi" class="form-label">Masukkan kalimat Capaian Pembelajaran atau beberapa materi pokok dipisahkan koma (,)</label>
+                  <textarea id="cp-materi" class="form-textarea" rows="4" placeholder="Contoh: Mengenali berbagai model jaringan komputer, dan melakukan pengiriman data antarperangkat."></textarea>
+                  
+                  <!-- Pesan Error Validasi -->
+                  <div id="validation-error" class="text-red-600 bg-red-100 border border-red-400 p-3 rounded-md mt-4 hidden">
+                      Harap isi semua kolom pada Identitas Modul dan Materi Pokok sebelum melanjutkan.
+                  </div>
+
+                  <button id="generate-tp-btn" class="btn btn-primary mt-4">Lanjutkan ke Tujuan Pembelajaran</button>
+            </section>
+
+            <!-- Output Sections, initially hidden -->
+            <div id="output-container" class="space-y-6 hidden">
+                
+                <!-- Step 3: Tujuan Pembelajaran (TP) -->
+                <section class="output-section" id="section-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-xl font-bold">3. Tujuan Pembelajaran (TP)</h2>
+                        <button id="print-tp-btn" class="btn btn-success hidden"><i class="fas fa-print mr-2"></i> Cetak</button>
+                    </div>
+                    <div id="tp-output"></div>
+                    <button id="generate-atp-btn" class="btn btn-primary mt-4 hidden">Buat Alur Tujuan Pembelajaran</button>
+                </section>
+                
+                <!-- Step 4: Alur Tujuan Pembelajaran (ATP) -->
+                <section class="output-section hidden" id="section-4">
+                  <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-xl font-bold">4. Alur Tujuan Pembelajaran (ATP)</h2>
+                        <button id="print-atp-btn" class="btn btn-success hidden"><i class="fas fa-print mr-2"></i> Cetak</button>
+                    </div>
+                    <div id="atp-output"></div>
+                    <button id="generate-kktp-btn" class="btn btn-primary mt-4 hidden">Buat KKTP</button>
+                </section>
+                
+                <!-- Step 5: Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) -->
+                <section class="output-section hidden" id="section-5">
+                  <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-xl font-bold">5. Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</h2>
+                        <button id="print-kktp-btn" class="btn btn-success hidden"><i class="fas fa-print mr-2"></i> Cetak</button>
+                    </div>
+                    <div id="kktp-output"></div>
+                    <button id="generate-rpp-btn" class="btn btn-primary mt-4 hidden">Buat RPP Lengkap</button>
+                </section>
+            </div>
+
+            <!-- RPP Final Output -->
+            <div id="rpp-output-container" class="output-section hidden">
+                <!-- RPPs will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-4">Bantuan Penggunaan Aplikasi</h2>
+            <div class="space-y-4 text-gray-700">
+                <p>Selamat datang di RPP Generator. Ikuti langkah-langkah berikut untuk membuat RPP secara otomatis:</p>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li><strong>Login:</strong> Masukkan username dan password yang telah ditentukan untuk masuk ke aplikasi.</li>
+                    <li><strong>Isi Identitas Modul & Siswa:</strong> Lengkapi semua data pada formulir pertama, seperti nama sekolah, jenjang, hingga data identifikasi awal siswa.</li>
+                    <li><strong>Masukkan Capaian Pembelajaran:</strong> Tulis kalimat CP atau beberapa materi pokok pada kolom yang tersedia.</li>
+                    <li><strong>Generate TP, ATP, KKTP:</strong> Klik tombol "Lanjutkan" atau "Buat" pada setiap langkah. Aplikasi akan otomatis menghasilkan Tujuan Pembelajaran (TP), Alur Tujuan Pembelajaran (ATP), dan Kriteria Ketercapaian (KKTP) berdasarkan materi yang Anda input.</li>
+                    <li><strong>Generate RPP Lengkap:</strong> Setelah KKTP dibuat, klik tombol "Buat RPP Lengkap" untuk menghasilkan dokumen RPP final, lengkap dengan lampiran soal yang dibuat oleh AI.</li>
+                    <li><strong>Cetak atau Simpan:</strong> Gunakan tombol "Cetak Semua RPP" untuk mencetak dokumen atau menyimpannya sebagai file PDF. Gunakan tombol "Simpan sebagai Word" untuk mengunduh RPP dalam format .docx.</li>
+                </ol>
+                <p>Jika ada kendala, silakan hubungi kontak yang tertera di bagian atas aplikasi.</p>
+            </div>
+            <div class="text-right mt-6">
+                <button id="close-help-btn" class="btn btn-primary">Tutup</button>
+            </div>
+        </div>
+    </div>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- STATE MANAGEMENT ---
+    // The API Key is now handled by the execution environment.
+    // The 'userApiKey' variable is kept as an empty string placeholder.
+    const userApiKey = ""; 
+    const rppData = {
+        namaSekolah: '', jenjang: '', mapel: '', tahunPelajaran: '', kelasSemester: '', fase: '',
+        alokasiWaktu: '', lingkungan: '', namaGuru: '', namaKepsek: '',
+        kota: '',
+        kktpTercapaiMin: 80, // Default for "Tercapai" minimum score
+        karakteristik: '', minat: '', motivasi: '', prestasi: '',
+        profilLulusan: [], saranaPrasarana: '',
+        kemitraan: '', lingkunganPembelajaran: '',
+        digitalPerencanaan: '', digitalPelaksanaan: '', digitalAsesmen: '',
+        cp_full_text: '', materiPokok: [], tujuanPembelajaran: [],
+    };
+
+    // --- DOM ELEMENTS ---
+    const loginScreen = document.getElementById('login-screen');
+    const mainApp = document.getElementById('main-app');
+    const loginBtn = document.getElementById('login-btn');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const closeHelpBtn = document.getElementById('close-help-btn');
+    const jenjangSelect = document.getElementById('jenjang-sekolah');
+    const kelasSelect = document.getElementById('kelas-semester');
+    const faseSelect = document.getElementById('fase');
+    const cpMateriInput = document.getElementById('cp-materi');
+    const generateTpBtn = document.getElementById('generate-tp-btn');
+    const outputContainer = document.getElementById('output-container');
+    const validationError = document.getElementById('validation-error');
+    const section3 = document.getElementById('section-3');
+    const tpOutput = document.getElementById('tp-output');
+    const generateAtpBtn = document.getElementById('generate-atp-btn');
+    const section4 = document.getElementById('section-4');
+    const atpOutput = document.getElementById('atp-output');
+    const generateKktpBtn = document.getElementById('generate-kktp-btn');
+    const section5 = document.getElementById('section-5');
+    const kktpOutput = document.getElementById('kktp-output');
+    const generateRppBtn = document.getElementById('generate-rpp-btn');
+    const rppOutputContainer = document.getElementById('rpp-output-container');
+    const profilLulusanChecklist = document.getElementById('profil-lulusan-checklist');
+    const printTpBtn = document.getElementById('print-tp-btn');
+    const printAtpBtn = document.getElementById('print-atp-btn');
+    const printKktpBtn = document.getElementById('print-kktp-btn');
+    const kktpTercapaiMinInput = document.getElementById('kktp-tercapai-min');
+
+
+    // --- INITIALIZE ---
+    function initializeAppElements() {
+        const profilItems = [
+            "Keimanan dan Ketakwaan terhadap Tuhan YME", "Kewargaan", "Penalaran Kritis", "Kreativitas", 
+            "Kolaborasi", "Kemandirian", "Kesehatan", "Komunikasi"
+        ];
+        profilItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center';
+            if (index === 0) {
+                div.classList.add('sm:col-span-2');
+            }
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = item.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, ''); // Sanitize ID
+            checkbox.name = 'profil-lulusan';
+            checkbox.value = item;
+            checkbox.className = 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded';
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = item;
+            label.className = 'ml-2 block text-sm text-gray-900';
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            profilLulusanChecklist.appendChild(div);
+        });
+    }
+    
+    initializeAppElements();
+
+    // --- EVENT LISTENERS ---
+    loginBtn.addEventListener('click', () => {
+        if (usernameInput.value.trim() === 'admin' && passwordInput.value.trim() === '111666') {
+            loginScreen.style.display = 'none';
+            mainApp.style.display = 'block';
+        } else {
+            loginError.classList.remove('hidden');
+        }
+    });
+    logoutBtn.addEventListener('click', () => window.location.reload());
+    helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
+    if (closeHelpBtn) closeHelpBtn.addEventListener('click', () => helpModal.style.display = 'none');
+    
+    jenjangSelect.addEventListener('change', updateKelasFaseOptions);
+    generateTpBtn.addEventListener('click', handleGenerateTP);
+    generateAtpBtn.addEventListener('click', handleGenerateATP);
+    generateKktpBtn.addEventListener('click', handleGenerateKKTP);
+    generateRppBtn.addEventListener('click', handleGenerateRPP);
+    
+    if (rppOutputContainer) {
+        rppOutputContainer.addEventListener('click', function(event) {
+            if (event.target.id === 'print-btn' || event.target.closest('#print-btn')) {
+                handlePrintFullRPP();
+            }
+            if (event.target.id === 'save-word-btn' || event.target.closest('#save-word-btn')) {
+                handleSaveAsWord();
+            }
+        });
+    }
+    printTpBtn.addEventListener('click', () => handlePrintSection('tp-output', 'Tujuan Pembelajaran'));
+    printAtpBtn.addEventListener('click', () => handlePrintSection('atp-output', 'Alur Tujuan Pembelajaran'));
+    printKktpBtn.addEventListener('click', () => handlePrintSection('kktp-output', 'Kriteria Ketercapaian Tujuan Pembelajaran'));
+
+
+    // --- FUNCTIONS ---
+    
+    function updateKelasFaseOptions() {
+        const jenjang = jenjangSelect.value;
+        const kelasOptions = {
+            'PAUD': ['Kelompok Bermain (2-4 Tahun)'],
+            'TK': ['Kelompok A (4-5 Tahun)', 'Kelompok B (5-6 Tahun)'],
+            'SD': ['I / Ganjil', 'I / Genap', 'II / Ganjil', 'II / Genap', 'III / Ganjil', 'III / Genap', 'IV / Ganjil', 'IV / Genap', 'V / Ganjil', 'V / Genap', 'VI / Ganjil', 'VI / Genap'],
+            'SMP': ['VII / Ganjil', 'VII / Genap', 'VIII / Ganjil', 'VIII / Genap', 'IX / Ganjil', 'IX / Genap'],
+            'SMA': ['X / Ganjil', 'X / Genap', 'XI / Ganjil', 'XI / Genap', 'XII / Ganjil', 'XII / Genap'],
+            'SDLB': ['Kelas I-VI'],
+            'SMPLB': ['Kelas VII-IX'],
+            'SMALB': ['Kelas X-XII']
+        };
+        const faseOptions = {
+            'PAUD': ['Fondasi'],
+            'TK': ['Fondasi'],
+            'SD': ['A', 'B', 'C'],
+            'SMP': ['D'],
+            'SMA': ['E', 'F'],
+            'SDLB': ['A', 'B', 'C'],
+            'SMPLB': ['D'],
+            'SMALB': ['E', 'F']
+        };
+
+        kelasSelect.innerHTML = '<option value="">Pilih Kelas/Semester</option>';
+        faseSelect.innerHTML = '<option value="">Pilih Fase</option>';
+
+        if (jenjang) {
+            kelasSelect.disabled = false;
+            faseSelect.disabled = false;
+            kelasOptions[jenjang].forEach(opt => {
+                kelasSelect.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            faseOptions[jenjang].forEach(opt => {
+                faseSelect.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+        } else {
+            kelasSelect.disabled = true;
+            faseSelect.disabled = true;
+        }
+    }
+
+    function captureAndValidateData() {
+        // Capture all data first
+        rppData.namaSekolah = document.getElementById('nama-sekolah').value.trim();
+        rppData.jenjang = jenjangSelect.value;
+        rppData.mapel = document.getElementById('mata-pelajaran').value.trim();
+        rppData.tahunPelajaran = document.getElementById('tahun-pelajaran').value.trim();
+        rppData.kelasSemester = document.getElementById('kelas-semester').value;
+        rppData.fase = faseSelect.value;
+        rppData.alokasiWaktu = document.getElementById('alokasi-waktu').value;
+        rppData.lingkungan = document.getElementById('lingkungan-sekolah').value.trim();
+        rppData.namaGuru = document.getElementById('nama-guru').value.trim();
+        rppData.namaKepsek = document.getElementById('nama-kepsek').value.trim();
+        rppData.kota = document.getElementById('kota').value.trim();
+        rppData.cp_full_text = cpMateriInput.value.trim();
+        rppData.karakteristik = document.getElementById('karakteristik-siswa').value.trim();
+        rppData.minat = document.getElementById('minat-belajar').value.trim();
+        rppData.motivasi = document.getElementById('motivasi-belajar').value.trim();
+        rppData.prestasi = document.getElementById('prestasi-belajar').value.trim();
+        rppData.profilLulusan = Array.from(document.querySelectorAll('input[name="profil-lulusan"]:checked')).map(cb => cb.value);
+        rppData.saranaPrasarana = document.getElementById('sarana-prasarana').value.trim();
+        rppData.kemitraan = document.getElementById('kemitraan-pembelajaran').value.trim();
+        rppData.lingkunganPembelajaran = document.getElementById('lingkungan-pembelajaran-rpp').value.trim();
+        rppData.digitalPerencanaan = document.getElementById('pemanfaatan-digital-perencanaan').value.trim();
+        rppData.digitalPelaksanaan = document.getElementById('pemanfaatan-digital-pelaksanaan').value.trim();
+        rppData.digitalAsesmen = document.getElementById('pemanfaatan-digital-asesmen').value.trim();
+
+
+        // Validate required fields
+        const requiredFields = [
+            'namaSekolah', 'jenjang', 'mapel', 'tahunPelajaran', 'kelasSemester',
+            'fase', 'alokasiWaktu', 'namaGuru', 'namaKepsek', 'kota',
+            'cp_full_text'
+        ];
+
+        let isValid = true;
+        let errorMessage = '';
+
+        for (const field of requiredFields) {
+            // Check for empty string for text inputs and textarea
+            if (typeof rppData[field] === 'string' && rppData[field].length === 0) {
+                isValid = false;
+                errorMessage = 'Harap isi semua kolom wajib (ditandai dengan huruf kecil a-j dan materi pokok).';
+                break;
+            }
+            // For select elements, ensure a non-empty value is selected
+            if ((field === 'jenjang' || field === 'kelasSemester' || field === 'fase' || field === 'alokasiWaktu') && rppData[field] === '') {
+                isValid = false;
+                errorMessage = 'Harap pilih opsi yang valid untuk semua dropdown wajib.';
+                break;
+            }
+        }
+
+        // Specific validation for kktpTercapaiMin
+        if (isValid) { // Only check if general fields are valid so far
+            const kktpMinString = kktpTercapaiMinInput.value.trim();
+            if (kktpMinString === '') {
+                isValid = false;
+                errorMessage = 'Nilai Minimal "Tercapai" tidak boleh kosong.';
+            } else {
+                const kktpMin = parseInt(kktpMinString);
+                if (isNaN(kktpMin) || kktpMin < 0 || kktpMin > 100) {
+                    isValid = false;
+                    errorMessage = 'Nilai Minimal "Tercapai" harus berupa angka antara 0-100.';
+                } else {
+                    rppData.kktpTercapaiMin = kktpMin; // Update rppData with parsed integer
+                }
+            }
+        }
+
+        if (!isValid) {
+            validationError.textContent = errorMessage;
+            validationError.classList.remove('hidden');
+        } else {
+            validationError.classList.add('hidden');
+        }
+        
+        console.log('Validation result:', isValid, rppData); // Debugging line
+        return isValid;
+    }
+    
+    async function handleGenerateTP() {
+        if (!captureAndValidateData()) {
+            console.log("Validation failed, not proceeding to generate TP.");
+            return;
+        }
+        console.log("Validation passed, proceeding to generate TP.");
+
+        tpOutput.innerHTML = `<div class="flex items-center justify-center p-4"><div class="loader mr-4"></div><p>AI sedang menganalisis CP dan membuat Tujuan Pembelajaran...</p></div>`;
+        outputContainer.classList.remove('hidden');
+        section4.classList.add('hidden');
+        section5.classList.add('hidden');
+        rppOutputContainer.classList.add('hidden');
+        printTpBtn.classList.add('hidden'); // Hide print button during generation
+        printAtpBtn.classList.add('hidden');
+        printKktpBtn.classList.add('hidden');
+        section3.scrollIntoView({ behavior: 'smooth' });
+
+        const prompt = `Anda adalah seorang ahli kurikulum pendidikan Indonesia. Analisis kalimat Capaian Pembelajaran (CP) berikut: "${rppData.cp_full_text}". Identifikasi setiap materi pokok yang utuh dan berbeda di dalamnya. Jangan hanya memecah berdasarkan koma jika masih dalam satu kesatuan ide.
+        
+        Untuk setiap materi pokok yang teridentifikasi, buatkan 3 Tujuan Pembelajaran (TP) sesuai level kognitif: Memahami, Mengaplikasi, dan Merefleksi. Gunakan format yang diberikan dalam contoh.
+        
+        Example 1: If the main topic is "various computer network models", the result:
+        - Memahami: Menjelaskan konsep dasar dan karakteristik berbagai model jaringan komputer.
+        - Mengaplikasi: Mengidentifikasi dan mengklasifikasikan model jaringan komputer dalam skenario nyata.
+        - Merefleksi: Mengevaluasi kelebihan dan kekurangan berbagai model jaringan komputer.
+
+        Example 2: If the main topic is "respiratory system working mechanism", the result:
+        - Memahami: Mengidentifikasi komponen utama dan fungsi dasar dari mekanisme kerja sistem pernapasan.
+        - Mengaplikasi: Menggambarkan alur kerja atau interaksi antar komponen dalam mekanisme kerja sistem pernapasan.
+        - Merefleksi: Menganalisis dampak gangguan pada mekanisme kerja sistem pernapasan.
+        
+        Berikan jawaban dalam format JSON yang valid. JSON harus berupa sebuah array, di mana setiap objek dalam array mewakili satu materi pokok dan memiliki kunci "topic" (string) dan "tps" (sebuah array dari 3 objek TP). Setiap objek TP harus memiliki kunci "level" dan "text".`;
+
+        const schema = {
+            type: "ARRAY",
+            items: {
+                type: "OBJECT",
+                properties: {
+                    "topic": { "type": "STRING" },
+                    "tps": {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                "level": { "type": "STRING" },
+                                "text": { "type": "STRING" }
+                            },
+                            required: ["level", "text"]
+                        }
+                    }
+                },
+                required: ["topic", "tps"]
+            }
+        };
+
+        try {
+            const apiKey = userApiKey; // Use the placeholder API key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", responseSchema: schema } };
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}. Pastikan API Key Anda valid.`); }
+            
+            const result = await response.json(); // Await the JSON parsing
+            const aiResult = JSON.parse(result.candidates[0].content.parts[0].text);
+            
+            rppData.tujuanPembelajaran = aiResult;
+            
+            let tableHtml = `<p class="mb-2 text-gray-700">Berdasarkan analisis AI, berhasil diidentifikasi <strong>${aiResult.length} materi pokok</strong> dengan rincian Tujuan Pembelajaran sebagai berikut:</p>`;
+            
+            aiResult.forEach(group => {
+                tableHtml += `<h4 class="font-bold text-lg mt-4 mb-2 bg-gray-100 p-2 rounded">Materi Pokok: ${group.topic}</h4>`;
+                tableHtml += `<table><thead class="bg-gray-50"><tr><th class="w-1/3">Level Kognitif</th><th>Tujuan Pembelajaran</th></tr></thead><tbody>`;
+                group.tps.forEach(tp => {
+                    tableHtml += `<tr><td><strong>${tp.level}</strong></td><td>${tp.text}</td></tr>`;
+                });
+                tableHtml += `</tbody></table>`;
+            });
+            
+            tpOutput.innerHTML = tableHtml;
+            generateAtpBtn.classList.remove('hidden'); // Show button after generation
+            printTpBtn.classList.remove('hidden'); // Show print button
+        } catch (error) {
+            console.error("Error generating TPs:", error);
+            tpOutput.innerHTML = `<p class="text-red-500">Gagal menganalisis CP dengan AI. Terjadi kesalahan pada server. Detail: ${error.message}</p>`;
+        }
+    }
+
+    function handleGenerateATP() {
+        if (rppData.tujuanPembelajaran.length === 0) {
+            atpOutput.innerHTML = `<p class="text-red-500">Tidak ada Tujuan Pembelajaran yang dihasilkan. Harap buat TP terlebih dahulu.</p>`;
+            return;
+        }
+
+        let tableHtml = `<p class="mb-2 text-gray-700">Tujuan pembelajaran diurutkan berdasarkan materi pokok untuk membentuk Alur Tujuan Pembelajaran (ATP).</p>`;
+        let counter = 1;
+        rppData.tujuanPembelajaran.forEach(group => {
+            tableHtml += `<h4 class="font-bold text-lg mt-4 mb-2">ATP untuk: ${group.topic}</h4>`;
+            tableHtml += `<table><thead class="bg-gray-50"><tr><th class="w-1/12">Urutan</th><th>Tujuan Pembelajaran (diurutkan)</th></tr></thead><tbody>`;
+            group.tps.forEach(tp => {
+                tableHtml += `<tr><td class="text-center">${counter++}</td><td>${tp.text}</td></tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+        });
+        
+        atpOutput.innerHTML = tableHtml;
+        section4.classList.remove('hidden');
+        section4.scrollIntoView({ behavior: 'smooth' });
+        generateKktpBtn.classList.remove('hidden'); // Show button after generation
+        printAtpBtn.classList.remove('hidden'); // Show print button
+    }
+    
+    function handleGenerateKKTP() {
+        const allTps = rppData.tujuanPembelajaran.flatMap(group => group.tps);
+        if (allTps.length === 0) {
+            kktpOutput.innerHTML = `<p class="text-red-500">Tidak ada Tujuan Pembelajaran yang dihasilkan. Harap buat TP terlebih dahulu.</p>`;
+            return;
+        }
+
+        const tercapaiMin = rppData.kktpTercapaiMin;
+        const hampirTercapaiMin = Math.max(0, tercapaiMin - 10); 
+        const belumTercapaiMax = Math.max(0, hampirTercapaiMin - 1); 
+
+        const kktpCriteria = {
+            'Memahami': "Kemampuan menjelaskan konsep dasar, karakteristik, dan fungsi utama dengan benar.",
+            'Mengaplikasi': "Kemampuan mengklasifikasikan contoh nyata atau menggambarkan alur proses secara logis dan tepat.",
+            'Merefleksi': "Kemampuan memberikan evaluasi kritis, membandingkan, dan menyajikan rekomendasi yang beralasan."
+        };
+
+        let tableHtml = `<table><thead class="bg-gray-50"><tr><th class="w-1/3">Tujuan Pembelajaran</th><th class="w-1/3">Kriteria Ketercapaian</th><th>Interval Nilai & Deskripsi</th></tr></thead><tbody>`;
+        allTps.forEach(tp => {
+            tableHtml += `
+                <tr><td rowspan="3">${tp.text}</td><td rowspan="3">${kktpCriteria[tp.level]}</td><td><strong>${tercapaiMin} - 100:</strong> Tercapai</td></tr>
+                <tr><td><strong>${hampirTercapaiMin} - ${tercapaiMin - 1}:</strong> Hampir Tercapai</td></tr>
+                <tr><td><strong>0 - ${belumTercapaiMax}:</strong> Belum Tercapai</td></tr>`;
+        });
+        tableHtml += `</tbody></table>`;
+        
+        const kesimpulanHtml = `<div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h4 class="font-bold text-lg text-blue-800">Kesimpulan Kriteria Ketercapaian</h4>
+            <p class="mt-2 text-gray-700">Peserta didik dianggap telah mencapai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) apabila memperoleh <strong>nilai minimal ${tercapaiMin}</strong> pada asesmen yang diberikan.</p>
+            <p class="mt-2 text-gray-700"><strong>Tindak Lanjut:</strong> Bagi peserta didik yang belum mencapai KKTP (nilai di bawah ${tercapaiMin}), guru akan memberikan program remedial berupa pembelajaran ulang dengan metode yang berbeda, tutor sebaya, atau pemberian tugas tambahan yang terstruktur untuk membantu mereka mencapai kompetensi yang diharapkan.</p>
+        </div>`;
+        kktpOutput.innerHTML = tableHtml + kesimpulanHtml;
+        section5.classList.remove('hidden');
+        section5.scrollIntoView({ behavior: 'smooth' });
+        generateRppBtn.classList.remove('hidden'); // Show button after generation
+        printKktpBtn.classList.remove('hidden'); // Show print button
+    }
+    
+    async function handleGenerateRPP() {
+        if (!captureAndValidateData()) {
+            rppOutputContainer.innerHTML = `<p class="text-red-500">Harap lengkapi semua isian formulir sebelum membuat RPP Lengkap.</p>`;
+            rppOutputContainer.classList.remove('hidden');
+            rppOutputContainer.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        if (rppData.tujuanPembelajaran.length === 0) {
+            rppOutputContainer.innerHTML = `<p class="text-red-500">Tidak ada Tujuan Pembelajaran yang dihasilkan. Harap buat TP terlebih dahulu.</p>`;
+            rppOutputContainer.classList.remove('hidden');
+            return;
+        }
+
+        rppOutputContainer.innerHTML = `<div class="flex items-center justify-center p-8"><div class="loader mr-4"></div><p>Sedang membuat RPP Lengkap... Ini mungkin memakan waktu beberapa saat.</p></div>`;
+        rppOutputContainer.classList.remove('hidden');
+        rppOutputContainer.scrollIntoView({ behavior: 'smooth' });
+
+        const { namaGuru, kelasSemester, fase, alokasiWaktu, mapel, tahunPelajaran, lingkungan, karakteristik, minat, motivasi, prestasi, profilLulusan, saranaPrasarana, kemitraan, lingkunganPembelajaran, digitalPerencanaan, digitalPelaksanaan, digitalAsesmen, kota } = rppData;
+        let finalHtml = `
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Hasil RPP Lengkap</h2>
+                <div class="flex space-x-2">
+                    <button id="save-word-btn" class="btn btn-info">
+                        <i class="fas fa-file-word mr-2"></i> Simpan sebagai Word
+                    </button>
+                    <button id="print-btn" class="btn btn-success">
+                        <i class="fas fa-print mr-2"></i> Cetak Semua RPP
+                    </button>
+                </div>
+            </div>
+            <div id="rpp-content-to-print">
+            <div class="mb-4 p-4 border rounded-md bg-gray-50" style="page-break-after: always;">
+                <h3 class="font-bold text-xl mb-2">Identifikasi Awal Peserta Didik</h3>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Karakteristik Siswa:</strong> ${karakteristik}</li>
+                    <li><strong>Minat Belajar:</strong> ${minat}</li>
+                    <li><strong>Motivasi Belajar:</strong> ${motivasi}</li>
+                    <li><strong>Prestasi Belajar:</strong> ${prestasi}</li>
+                    <li><strong>Lingkungan Sekolah:</strong> ${lingkungan}</li>
+                </ul>
+            </div>`;
+        
+        let rppCounter = 0;
+
+        for (const group of rppData.tujuanPembelajaran) {
+            for (const tp of group.tps) {
+                rppCounter++;
+                const isPBL = tp.level === 'Memahami'; // Use PBL for "Memahami" level
+                const modelPembelajaran = isPBL ? 'Problem Based Learning (PBL)' : 'Project Based Learning (PjBL)';
+                
+                const createIdentitas = () => {
+                    const profilList = profilLulusan.length > 0 ? `<tr><td class="!font-semibold">Profil Lulusan</td><td>: ${profilLulusan.join(', ')}</td></tr>` : '';
+                    const saranaList = saranaPrasarana ? `<tr><td class="!font-semibold">Sarana & Prasarana</td><td>: ${saranaPrasarana}</td></tr>` : '';
+                    return `
+                    <h4 class="font-bold text-lg mt-8 mb-2">A. IDENTITAS MODUL</h4>
+                    <table class="!my-2"><tbody>
+                        <tr><td class="!font-semibold !w-1/3">Nama Penyusun</td><td>: ${namaGuru}</td></tr>
+                        <tr><td class="!font-semibold">Satuan Pendidikan</td><td>: ${rppData.namaSekolah}</td></tr>
+                        <tr><td class="!font-semibold">Mata Pelajaran</td><td>: ${rppData.mapel}</td></tr>
+                        <tr><td class="!font-semibold">Tahun Pelajaran</td><td>: ${tahunPelajaran}</td></tr>
+                        <tr><td class="!font-semibold">Kelas/Fase</td><td>: ${kelasSemester} / Fase ${fase}</td></tr>
+                        <tr><td class="!font-semibold">Materi Pokok</td><td>: ${group.topic}</td></tr>
+                        <tr><td class="!font-semibold">Alokasi Waktu</td><td>: ${alokasiWaktu}</td></tr>
+                        <tr><td class="!font-semibold">Jumlah Pertemuan</td><td>: 1 Kali Pertemuan</td></tr>
+                        <tr><td class="!font-semibold">Model Pembelajaran</td><td>: ${modelPembelajaran}</td></tr>
+                        <tr><td class="!font-semibold">Pendekatan</td><td>: Konstruktivisme</td></tr>
+                        <tr><td class="!font-semibold">Strategi</td><td>: Inkuiri</td></tr>
+                        <tr><td class="!font-semibold">Metode</td><td>: Diskusi, Tanya Jawab, Ceramah Singkat</td></tr>
+                        ${profilList}
+                        ${saranaList}
+                    </tbody></table>`;
+                }
+                
+                const createKerangkaPembelajaran = () => `
+                    <h4 class="font-bold text-lg mt-4 mb-2">KERANGKA PEMBELAJARAN</h4>
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li><strong>Praktik Pedagogis</strong>
+                            <ul class="list-disc list-inside ml-8">
+                                <li>Model Pembelajaran: ${modelPembelajaran} berbasis Flipped Classroom</li>
+                                <li>Pendekatan Pembelajaran: Konstruktivisme</li>
+                                <li>Strategi Pembelajaran: Inkuiri</li>
+                                <li>Metode Pembelajaran: Diskusi – Tanya Jawab - Ceramah</li>
+                            </ul>
+                        </li>
+                        <li><strong>Kemitraan Pembelajaran</strong>
+                            <p class="ml-8">${kemitraan}</p>
+                        </li>
+                        <li><strong>Lingkungan Pembelajaran</strong>
+                             <p class="ml-8">${lingkunganPembelajaran}</p>
+                        </li>
+                        <li><strong>Pemanfaatan Digital</strong>
+                            <ul class="list-disc list-inside ml-8">
+                                <li>Perencanaan pembelajaran: ${digitalPerencanaan}</li>
+                                <li>Pelaksanaan Pembelajaran: ${digitalPelaksanaan}</li>
+                                <li>Asesmen pembelajaran: ${digitalAsesmen}</li>
+                            </ul>
+                        </li>
+                    </ol>`;
+
+                const createLangkahPembelajaran = () => {
+                    const jpMatch = alokasiWaktu.match(/(\d+)\s*JP\s*x\s*(\d+)\s*Menit/i);
+                    let totalMenit = 90; // Default if parsing fails
+                    if (jpMatch) {
+                        totalMenit = parseInt(jpMatch[1], 10) * parseInt(jpMatch[2], 10);
+                    }
+                    
+                    const waktuPendahuluan = Math.max(10, Math.round(totalMenit * 0.15 / 5) * 5); 
+                    const waktuPenutup = Math.max(10, Math.round(totalMenit * 0.15 / 5) * 5);
+                    const waktuInti = totalMenit - waktuPendahuluan - waktuPenutup;
+
+                    let kegiatanInti;
+                    if (isPBL) { // Problem Based Learning
+                        kegiatanInti = `
+                            <li><strong>Orientasi siswa pada masalah (${Math.round(waktuInti * 0.20)} Menit):</strong> Guru menyajikan studi kasus nyata atau video fenomena terkait ${group.topic} dan meminta siswa merumuskan pertanyaan. <em>(Meaningful Learning)</em></li>
+                            <li><strong>Mengorganisasikan siswa untuk belajar (${Math.round(waktuInti * 0.15)} Menit):</strong> Siswa dibagi dalam kelompok (4-5 orang) untuk mendefinisikan masalah, lalu merencanakan penyelidikan mereka menggunakan LKPD. <em>(Joyful Learning)</em></li>
+                            <li><strong>Bimbingan penyelidikan (${Math.round(waktuInti * 0.35)} Menit):</strong> Kelompok melakukan studi literasi dari buku paket, artikel, atau sumber digital yang disediakan untuk mencari data dan informasi relevan. Guru berkeliling untuk memfasilitasi diskusi dan memastikan semua anggota aktif.</li>
+                            <li><strong>Pengembangan dan penyajian hasil (${Math.round(waktuInti * 0.15)} Menit):</strong> Kelompok menyusun hasil penyelidikan dalam bentuk peta konsep, infografis sederhana, atau poin-pun presentasi di kertas plano.</li>
+                            <li><strong>Analisis dan evaluasi proses pemecahan masalah (${Math.round(waktuInti * 0.15)} Menit):</strong> Setiap kelompok mempresentasikan solusinya. Kelompok lain memberikan tanggapan atau pertanyaan. Guru memberikan penguatan, klarifikasi, dan meluruskan miskonsepsi yang mungkin timbul. <em>(Mindful Learning)</em></li>`;
+                    } else { // Project Based Learning (for Mengaplikasi and Merefleksi)
+                        kegiatanInti = `
+                            <li><strong>Penentuan Pertanyaan Mendasar (${Math.round(waktuInti * 0.15)} Menit):</strong> Guru memantik diskusi dengan pertanyaan proyek yang menantang, contoh: "Bagaimana kita bisa ${tp.level === 'Mengaplikasi' ? `merancang sebuah simulasi sederhana dari ${group.topic}` : `membuat panduan rekomendasi untuk memilih ${group.topic} yang tepat` }?". <em>(Meaningful Learning)</em></li>
+                            <li><strong>Mendesain Perencanaan Proyek (${Math.round(waktuInti * 0.20)} Menit):</strong> Secara berkelompok, siswa menyusun proposal singkat berisi tujuan, target audiens, alat, bahan, dan langkah-langkah kerja proyek. <em>(Joyful Learning)</em></li>
+                            <li><strong>Menyusun Jadwal (${Math.round(waktuInti * 0.10)} Menit):</strong> Guru dan siswa menyepakati timeline pengerjaan proyek yang realistis.</li>
+                            <li><strong>Memonitor Proyek (${Math.round(waktuInti * 0.30)} Menit):</strong> Siswa mulai mengerjakan proyeknya. Guru secara berkala memeriksa kemajuan dan memberikan umpan balik.</li>
+                            <li><strong>Penilaian Hasil (${Math.round(waktuInti * 0.15)} Menit):</strong> Siswa mempresentasikan produk akhir proyek mereka.</li>
+                            <li><strong>Evaluasi Pengalaman (${Math.round(waktuInti * 0.10)} Menit):</strong> Siswa dan guru merefleksikan proses dan hasil proyek. <em>(Mindful Learning)</em></li>`;
+                    }
+                    
+                    return `
+                        <h4 class="font-bold text-lg mt-4 mb-2">C. LANGKAH-LANGKAH PEMBELAJARAN</h4>
+                        <div class="border-l-4 border-blue-500 pl-4 py-2"><p class="font-semibold">Kegiatan Pendahuluan (${waktuPendahuluan} Menit)</p><ul class="list-disc list-inside ml-4"><li><strong>Apersepsi (${Math.round(waktuPendahuluan * 0.3)} Menit):</strong> Guru memulai dengan salam, doa, dan memeriksa kehadiran. <em>(Mindful Learning)</em></li><li><strong>Motivasi (${Math.round(waktuPendahuluan * 0.4)} Menit):</strong> Guru menampilkan gambar/video singkat yang relevan dengan ${group.topic} untuk menarik minat belajar. <em>(Meaningful Learning)</em></li><li><strong>Eksplorasi Konsep (${Math.round(waktuPendahuluan * 0.3)} Menit):</strong> Guru mengajukan pertanyaan pemantik dan menjelaskan tujuan pembelajaran. <em>(Joyful Learning)</em></li></ul></div>
+                        <div class="border-l-4 border-green-500 pl-4 py-2 mt-4"><p class="font-semibold">Kegiatan Inti (${waktuInti} Menit)</p><ol class="list-decimal list-inside ml-4 space-y-2">${kegiatanInti}</ol></div>
+                        <div class="border-l-4 border-yellow-500 pl-4 py-2 mt-4"><p class="font-semibold">Kegiatan Penutup (${waktuPenutup} Menit)</p><ul class="list-disc list-inside ml-4"><li><strong>Refleksi (${Math.round(waktuPenutup * 0.7)} Menit):</strong> Guru bersama siswa menyimpulkan poin-pun penting. Siswa diminta mengungkapkan apa yang paling menarik atau sulit. <em>(Mindful Learning)</em></li><li><strong>Rencana Tindak Lanjut (${Math.round(waktuPenutup * 0.3)} Menit):</strong> Guru memberikan umpan balik, menginformasikan materi berikutnya, dan menutup pelajaran.</li></ul></div>`;
+                };
+
+                const createAsesmen = () => `
+                    <h4 class="font-bold text-lg mt-4 mb-2">D. ASESMEN PEMBELAJARAN</h4>
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li><strong>Asesmen Formatif:</strong> Dilakukan selama proses belajar melalui kuis singkat (lisan/tertulis), observasi keaktifan diskusi, penilaian presentasi kelompok, dan catatan refleksi siswa.</li>
+                        <li><strong>Asesmen Sumatif:</strong> Dilakukan di akhir unit pembelajaran melalui presentasi produk akhir proyek, dan tes tulis (soal pilihan ganda dan uraian) yang mencakup semua materi.</li>
+                    </ol>`;
+
+                const createLKPD = () => {
+                    let lkpdContent;
+                    if(isPBL) {
+                        lkpdContent = `<p class="font-semibold mt-4">Instruksi:</p><ol class="list-decimal list-inside ml-4"><li>Amati studi kasus / video yang disajikan oleh guru.</li><li>Diskusikan dalam kelompok dan jawablah pertanyaan pemandu berikut.</li><li>Tuliskan jawaban kelompok Anda pada ruang yang tersedia.</li></ol><p class="font-semibold mt-4">Pertanyaan Pemandu:</p><ol class="list-decimal list-inside ml-4"><li>Masalah utama apa yang kalian temukan terkait ${group.topic}?</li><li>Informasi apa saja yang kalian butuhkan untuk memecahkan masalah tersebut?</li><li>Bagaimana komponen-komponen dari ${group.topic} saling berhubungan dalam konteks masalah ini?</li></ol>`;
+                    } else {
+                            lkpdContent = `<p class="font-semibold mt-4">Instruksi:</p><ol class="list-decimal list-inside ml-4"><li>Berdasarkan pertanyaan mendasar dari guru, rancanglah sebuah proyek dalam kelompok.</li><li>Isilah kerangka perencanaan proyek di bawah ini.</li><li>Presentasikan hasil rancangan Anda untuk mendapatkan masukan.</li></p><p class="font-semibold mt-4">Kerangka Perencanaan Proyek:</p><ul class="list-disc list-inside ml-4"><li><strong>Judul Proyek:</strong> .....................................................</li><li><strong>Tujuan Proyek:</strong> ....................................................</li><li><strong>Langkah-langkah Kerja:</strong> (1)... (2)... (3)...</li><li><strong>Alat dan Bahan yang Dibutuhkan:</strong> .............................</li></ul>`;
+                    }
+
+                    return `<div class="mt-6 p-4 border-2 border-dashed border-gray-400 rounded-lg" style="page-break-inside: avoid;"><h4 class="font-bold text-center text-lg uppercase">LEMBAR KERJA PESERTA DIDIK (LKPD)</h4><table class="!my-2 !border-none"><tr class="!border-none"><td class="!border-none !p-1">Mata Pelajaran</td><td class="!border-none !p-1">: ${rppData.mapel}</td></tr><tr class="!border-none"><td class="!border-none !p-1">Kelas / Fase</td><td class="!border-none !p-1">: ${kelasSemester} / ${fase}</td></tr><tr class="!border-none"><td class="!border-none !p-1">Materi Pokok</td><td class="!border-none !p-1">: ${group.topic}</td></tr></table><hr class="my-3"><p><strong>Kelompok:</strong> .................... <strong class="ml-4">Anggota:</strong> 1.................... 2.................... 3.................... 4....................</p>${lkpdContent}<div class="mt-4"><p class="font-semibold">Ruang Jawaban / Laporan Progres:</p><div class="h-48 border rounded p-2 bg-gray-50"></div></div></div>`;
+                };
+                
+                const createHOTSforRPP = async () => {
+                    const prompt = `Anda adalah seorang ahli pembuat soal ujian untuk level ${rppData.jenjang}. Buat instrumen penilaian HOTS untuk RPP mata pelajaran ${rppData.mapel} dengan tujuan pembelajaran: "${tp.text}".
+                    
+                    Buat respons dalam format JSON yang valid. JSON harus memiliki dua kunci utama: "pilihan_ganda" dan "uraian".
+
+                    "pilihan_ganda" harus berisi array dari 10 objek soal. Setiap objek harus memiliki kunci: "pertanyaan" (string), "opsi" (objek dengan kunci "A", "B", "C", "D", "E"), dan "kunci" (string jawaban yang benar, misal "A"). Pastikan soal relevan dengan level kognitif "${tp.level}" dan buat pengecoh yang logis.
+                    
+                    "uraian" harus berisi array dari 5 objek soal. Setiap objek harus memiliki kunci: "pertanyaan" (string) dan "pembahasan" (string pembahasan yang komprehensif).`;
+
+                    const schema = { type: "OBJECT", properties: { "pilihan_ganda": { type: "ARRAY", items: { type: "OBJECT", properties: { "pertanyaan": { "type": "STRING" }, "opsi": { type: "OBJECT", properties: { "A": { "type": "STRING" }, "B": { "type": "STRING" }, "C": { "type": "STRING" }, "D": { "type": "STRING" }, "E": { "type": "STRING" } }, required: ["A", "B", "C", "D", "E"] }, "kunci": { "type": "STRING" } }, required: ["pertanyaan", "opsi", "kunci"] } }, "uraian": { type: "ARRAY", items: { type: "OBJECT", properties: { "pertanyaan": { "type": "STRING" }, "pembahasan": { "type": "STRING" } }, required: ["pertanyaan", "pembahasan"] } } }, required: ["pilihan_ganda", "uraian"] };
+                    
+                    try {
+                        const apiKey = userApiKey; // Use the placeholder API key
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                        const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", responseSchema: schema } };
+                        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                        const result = await response.json(); // Await the JSON parsing
+                        const aicontent = JSON.parse(result.candidates[0].content.parts[0].text);
+                        
+                        let pgHtml = '';
+                        aicontent.pilihan_ganda.forEach((soal, index) => {
+                            pgHtml += `<li class="mt-4">${soal.pertanyaan}<ol type="A" class="ml-8 list-none p-0">
+                                <li>A. ${soal.opsi.A}</li><li>B. ${soal.opsi.B}</li><li>C. ${soal.opsi.C}</li><li>D. ${soal.opsi.D}</li><li>E. ${soal.opsi.E}</li>
+                            </ol></li>`;
+                        });
+                        const kunciJawaban = aicontent.pilihan_ganda.map((soal, index) => `${index + 1}. ${soal.kunci}`).join('<br>');
+                        
+                        let uraianHtml = '';
+                        aicontent.uraian.forEach((soal) => {
+                            uraianHtml += `<li class="mt-4"><strong>${soal.pertanyaan}</strong><p class="mt-2"><strong>Pembahasan:</strong> ${soal.pembahasan}</p></li>`;
+                        });
+                        
+                        const scoringFormatHtml = `
+                            <div class="mt-8">
+                                <h4 class="font-semibold text-lg">III. Format Penilaian</h4>
+                                <h5 class="font-semibold text-md mt-4">A. Penilaian Soal Pilihan Ganda</h5>
+                                <p>Setiap jawaban yang benar pada soal pilihan ganda akan diberi skor 1. Skor maksimal untuk pilihan ganda adalah ${aicontent.pilihan_ganda.length}.</p>
+                                <p><strong>Skor Akhir Pilihan Ganda = (Jumlah Jawaban Benar / ${aicontent.pilihan_ganda.length}) x 100</strong></p>
+                                
+                                <h5 class="font-semibold text-md mt-6">B. Penilaian Soal Uraian</h5>
+                                <p>Setiap soal uraian akan dinilai berdasarkan rubrik berikut (skala 0-4):</p>
+                                <table class="mt-2">
+                                    <thead>
+                                        <tr>
+                                            <th>Skor</th>
+                                            <th>Kriteria</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>4</td>
+                                            <td>Jawaban sangat lengkap, akurat, dan menunjukkan pemahaman mendalam.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Jawaban lengkap dan akurat, menunjukkan pemahaman yang baik.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Jawaban cukup lengkap, namun ada beberapa ketidakakuratan atau kurang jelas.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Jawaban tidak lengkap dan banyak ketidakakuratan.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>0</td>
+                                            <td>Tidak menjawab atau jawaban salah total.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="mt-4"><strong>Skor Akhir Uraian = (Total Skor Uraian / (${aicontent.uraian.length} x 4)) x 100</strong></p>
+                                <p><strong>Skor Total = (Skor Akhir Pilihan Ganda + Skor Akhir Uraian) / 2</strong></p>
+                            </div>
+                        `;
+
+                        return `<div class="lampiran-section mt-8" style="page-break-before: always;"><h3 class="font-bold text-xl">LAMPIRAN: INSTRUMEN PENILAIAN</h3><h4 class="font-semibold text-lg mt-4">I. Soal Pilihan Ganda</h4><ol class="list-decimal list-inside space-y-3 mb-4">${pgHtml}</ol><h5 class="font-bold">Kunci Jawaban Pilihan Ganda</h5><div>${kunciJawaban}</div><h4 class="font-semibold text-lg mt-6">II. Soal Uraian</h4><ol class="list-decimal list-inside space-y-4">${uraianHtml}</ol>${scoringFormatHtml}</div>`;
+                    } catch (error) {
+                        console.error("Error generating HOTS questions:", error);
+                        return `<div class="lampiran-section mt-8" style="page-break-before: always;"><h3 class="font-bold text-xl">LAMPIRAN: INSTRUMEN PENILAIAN</h3><p class="text-red-500">Gagal membuat soal dengan AI. Pastikan API Key Anda valid. Detail: ${error.message}</p></div>`;
+                    }
+                };
+                
+                const createTandaTangan = () => {
+                    const parseNameAndNip = (s) => s.includes('/') ? { name: s.split('/')[0].trim(), nip: s.split('/')[1].trim() } : { name: s.trim(), nip: '' };
+                    const guru = parseNameAndNip(rppData.namaGuru);
+                    const kepsek = parseNameAndNip(rppData.namaKepsek);
+                    const formattedDate = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                    const kepsekNipDisplay = kepsek.nip ? `NIP: ${kepsek.nip}` : 'NIP: .................................';
+                    const guruNipDisplay = guru.nip ? `NIP: ${guru.nip}` : 'NIP: .................................';
+                    return `
+                        <div class="mt-12" style="page-break-inside: avoid;">
+                            <div class="flex justify-end"><div class="text-center">${kota}, ${formattedDate}</div></div>
+                            <div class="flex justify-between mt-4 text-center">
+                                <div class="w-2/5">
+                                    <p>Mengetahui,</p><p>Kepala Sekolah</p><div class="h-20"></div>
+                                    <p class="font-bold underline">${kepsek.name}</p><p>${kepsekNipDisplay}</p>
+                                </div>
+                                <div class="w-2/5">
+                                    <p class="text-white">.</p><p>Guru Mata Pelajaran</p><div class="h-20"></div>
+                                    <p class="font-bold underline">${guru.name}</p><p>${guruNipDisplay}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                };
+
+                const lampiranSoalHtml = await createHOTSforRPP(); // Await the async function
+
+                finalHtml += `
+                    <div class="rpp-section mt-8">
+                        <h2 class="text-center font-bold text-2xl mb-1">RENCANA PELAKSANAAN PEMBELAJARAN (RPP)</h2>
+                        <h3 class="text-center font-bold text-xl mb-4">PERTEMUAN KE-${rppCounter}</h3>
+                        ${createIdentitas()}
+                        <h4 class="font-bold text-lg mt-4 mb-2">B. TUJUAN PEMBELAJARAN</h4>
+                        <p class="p-2 bg-gray-100 rounded">${tp.text}</p>
+                        ${createKerangkaPembelajaran()}
+                        ${createLangkahPembelajaran()}
+                        ${createAsesmen()}
+                        ${createLKPD()}
+                        ${createTandaTangan()}
+                        <div class="rpp-footer">RPP ${namaGuru.split('/')[0].trim()} ${mapel} ${tahunPelajaran} ${kelasSemester} ${rppData.namaSekolah}</div>
+                        ${lampiranSoalHtml}
+                    </div>`;
+            }
+        }
+        
+        finalHtml += `</div>`;
+        rppOutputContainer.innerHTML = finalHtml;
+        rppOutputContainer.classList.remove('hidden');
+        rppOutputContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function handlePrintSection(elementId, title) {
+        const parseName = (s) => s.includes('/') ? s.split('/')[0].trim() : s.trim();
+        const fileName = `${title} - ${rppData.mapel} ${parseName(rppData.namaGuru)}`;
+        const contentToPrint = document.getElementById(elementId).innerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.open();
+        printWindow.document.write(`
+            <html><head><title>${fileName}</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+                @page { 
+                    size: A4; 
+                    margin: 2cm;
+                }
+                body { 
+                    font-family: 'Inter', sans-serif; 
+                    line-height: 1.5;
+                }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #e5e7eb; padding: 0.75rem; text-align: left; }
+                th { background-color: #f9fafb; font-weight: 600; }
+                h2, h3, h4 { text-align: left; }
+                h2 { font-size: 1.5rem; font-weight: bold; }
+                h3 { font-size: 1.25rem; font-weight: bold; }
+                h4 { font-size: 1.125rem; font-weight: bold; }
+                .prose { max-width: none; }
+                /* Ensure list styles are preserved */
+                ul.list-disc, ol.list-decimal {
+                    list-style-position: inside;
+                    margin-left: 1rem;
+                }
+                ul.list-disc li, ol.list-decimal li {
+                    margin-bottom: 0.25rem;
+                }
+            </style>
+            </head><body class="prose">
+                <h2>${title.toUpperCase()}</h2>
+                <h3>${rppData.mapel}</h3>
+                <h4>${rppData.namaSekolah}</h4>
+                <hr style="margin: 2rem 0;" />
+                ${contentToPrint}
+            </body></html>`);
+        printWindow.document.close();
+        setTimeout(() => { printWindow.focus(); printWindow.print(); printWindow.close(); }, 500);
+    }
+
+    function handlePrintFullRPP() {
+        const parseName = (s) => s.includes('/') ? s.split('/')[0].trim() : s.trim();
+        const fileName = `RPP ${rppData.mapel} ${rppData.kelasSemester.replace(/\s\/\s/g, '-')} Fase ${rppData.fase} ${parseName(rppData.namaGuru)}`;
+        const content = document.getElementById('rpp-content-to-print').innerHTML; // Get content from the specific div
+        const printWindow = window.open('', '_blank');
+        printWindow.document.open();
+        printWindow.document.write(`
+            <html><head><title>${fileName}</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+                @page { 
+                    size: A4; 
+                    margin: 2cm;
+                }
+                body { 
+                    font-family: 'Inter', sans-serif; 
+                    line-height: 1.5;
+                }
+                .rpp-section { 
+                    page-break-after: always; 
+                    padding: 0; /* Handled by @page margin */
+                    margin: 0;
+                }
+                .rpp-section:last-child {
+                    page-break-after: auto; 
+                }
+                .lampiran-section { 
+                    page-break-before: always; 
+                    padding: 0; /* Handled by @page margin */
+                    margin: 0;
+                }
+                hr { display: none; } /* Hide horizontal rules in print */
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #e5e7eb; padding: 0.75rem; text-align: left; }
+                th { background-color: #f9fafb; font-weight: 600; }
+                h2, h3, h4 { text-align: left; }
+                h2 { font-size: 1.5rem; font-weight: bold; }
+                h3 { font-size: 1.25rem; font-weight: bold; }
+                h4 { font-size: 1.125rem; font-weight: bold; }
+                .rpp-footer {
+                    display: block;
+                    text-align: left;
+                    margin-top: 1.25cm;
+                    font-style: italic;
+                    color: #6b7280;
+                    font-size: 9pt;
+                }
+                /* Ensure list styles are preserved */
+                ul.list-disc, ol.list-decimal {
+                    list-style-position: inside;
+                    margin-left: 1rem;
+                }
+                ul.list-disc li, ol.list-decimal li {
+                    margin-bottom: 0.25rem;
+                }
+            </style>
+            </head><body class="prose max-w-none">${content}</body></html>`);
+        printWindow.document.close();
+        setTimeout(() => { printWindow.focus(); printWindow.print(); printWindow.close(); }, 500);
+    }
+
+    function handleSaveAsWord() {
+        const parseName = (s) => s.includes('/') ? s.split('/')[0].trim() : s.trim();
+        const fileName = `RPP ${rppData.mapel} ${rppData.kelasSemester.replace(/\s\/\s/g, '-')} Fase ${rppData.fase} ${parseName(rppData.namaGuru)}.docx`;
+        
+        // We need to create the full HTML structure for the docx conversion
+        const header = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <style>
+                body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #dddddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                h1, h2, h3, h4, h5, h6 { font-family: 'Times New Roman', Times, serif; }
+                .rpp-section, .lampiran-section { page-break-after: always; }
+                .rpp-section:last-of-type, .lampiran-section:last-of-type { page-break-after: auto; }
+            </style>
+            </head>
+            <body>`;
+        
+        const footer = `</body></html>`;
+        const content = document.getElementById('rpp-content-to-print').innerHTML;
+        const fullHtml = header + content + footer;
+
+        var converted = htmlDocx.asBlob(fullHtml);
+        saveAs(converted, fileName);
+    }
+});
+</script>
+
+</body>
+</html>
